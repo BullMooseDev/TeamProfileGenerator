@@ -8,9 +8,20 @@
     <title>Document</title>
 </head>
 <body>
-    <div id="banner">
-        <h1>my team</h1>
+    <div class="d-flex justify-content-center bg-danger" id="banner">
+        <h1 class="text-light">My Team</h1>
     </div>
+
 <!-- cards go here -->
+
+<div class="card m-4" id="cardHome" style="width: 18rem;">
+    <div class="card-body">
+      <h5 class="card-title">Card title</h5>
+      <p class="card-text">${name} <br>${role} <br>${officeLocation} <br>${idNumber} <br>${attendedSchool} </p>
+      <a href="https://github.com/${githubUserName}" id="github" class="btn btn-primary">Go to github</a>
+      <a href="mailto: ${teamMemberEmail}" id="email" class="btn btn-primary">Send an email</a>
+    </div>
+  </div>
+
 </body>
 </html>
