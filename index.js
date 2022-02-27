@@ -1,176 +1,145 @@
-const inquirer = require('inquirer');
-const fs = require('fs');
-/* const generateHtml = require('./lib/src/htmlTemplate'); */
-/* const Employee = require('./lib/employee');
+const inquirer = require("inquirer");
+const Manager = require("./lib/manager");
 const Engineer = require('./lib/engineer');
 const Intern = require('./lib/intern');
-const Manager = require('./lib/manager'); */
+const htmlTemplate = require("./lib/src/htmlTemplate")
+const fs = require('fs')
+const employees = [];
 
-const determineEmployeeCount = () => {
-    console.log('We are now creating a professional profile for your team!');
-
-    return inquirer.prompt([
+function startWithMgr () {
+    inquirer.prompt([
         {
-            type: 'number',
-            message: 'how many employees do you have in total? (Required)',
-            name: 'employeeCount',
-            validate: employeeCount => {
-                if (employeeCount) {
-                    return true;
-                } else {
-                    console.log('you need to type how many members are on the team.');
-                    return false;
-                }
-            }
+            type: 'input',
+            message: 'What is the Manager name?',
+            name: `mgrName`
+        },
+        {
+            type: 'input',
+            message: 'What is the Manager ID?',
+            name: `mgrId`
+        },
+        {
+            type: 'input',
+            message: 'What is the Manager Email?',
+            name: `mgrEmail`
+        },
+        {
+            type: 'input',
+            message: 'What is the Manager office Number?',
+            name: `mgrOffice`
         }
-    ]).then(function (numberResponse) {
-        console.log(numberResponse)
-        if (numberResponse.employeeCount < 2) {
-            return employeeDescription();
-        } else {
-            numberResponse.employeeCount.forEach(employeeCount => {
-                employeeDescription();
-            })
-        };
-    });
-};
-
-
-/* use a for loop to ask the employeedescription multiple times based on number prompt
-push each employee object into an array
-use for each to turn each object in array into a card onto html 
-
-also use foreach for each object in order to deconstruct and get individual data?*/
-
-const employeeDescription = () => {
-    return inquirer.prompt([
-        {
-            type: 'input',
-            message: "please enter the employee name. (Required)",
-            name: 'employeeName',
-            validate: nameInput => {
-                if (nameInput) {
-                    return true;
-                } else {
-                    console.log('you need to type a name');
-                    return false;
-                }
-            }
-        },
-        {
-            type: 'input',
-            message: "please enter the employees email. (Required)",
-            name: 'teamMemberEmail',
-            validate: roleInput => {
-                if (roleInput) {
-                    return true;
-                } else {
-                    console.log('you need to type a email');
-                    return false;
-                }
-            }
-        },
-        {
-            type: 'input',
-            message: "please input the employees github. (Required)",
-            name: 'githubUserName',
-            validate: roleInput => {
-                if (roleInput) {
-                    return true;
-                } else {
-                    console.log('you need to type a github');
-                    return false;
-                }
-            }
-        },
-        {
-            type: 'input',
-            message: "please enter the employees id. (Required)",
-            name: 'idNumber',
-            validate: idInput => {
-                if (idInput) {
-                    return true;
-                } else {
-                    console.log('you need to type a id');
-                    return false;
-                }
-            }
-        },
-        {
-            type: 'input',
-            message: "please enter the employees office location. (Required)",
-            name: 'officeLocation',
-            validate: officeLocation => {
-                if (officeLocation) {
-                    return true;
-                } else {
-                    console.log('you need to type the office location');
-                    return false;
-                }
-            }
-        },
-        {
-            type: 'list',
-            message: "please choose the employees role. (Required)",
-            name: 'role',
-            default: 'index',
-            choices: ['engineer', 'manager', 'intern']
-        }
-    ]).then(function (responses) {
-        for (let i = 0; i < responses.role.length; i++) {
-            if (responses.role == "intern") {
-                return inquirer.prompt([
-                    {
-                        type: 'input',
-                        name: 'attendedSchool',
-                        message: 'what school did the intern attend?',
-                        validate: schoolInput => {
-                            if (schoolInput) {
-                                return true;
-                            } else {
-                                console.log('you need to type a school');
-                                return false;
-                            }
-                        }
-                    }
-                ]);
-            } else {
-                return;
-            }
-        };
+    ]).then(response => {
+        const newMgr = new Manager(response.mgrName, response.mgrId, response.mgrEmail, response.mgrOffice);
+        console.log(newMgr.getRole())
+        employees.push(newMgr)
+        mainMenu()
     })
-};
-
-/* make it ask if theres more employees and if yes then run the inquirer again?
-use a for loop at beginning asking how many employees need to be made?
-
-function getAnswers() {
-return inquirer.prompt(questions).then((answers) => {
-    if (answers.is_finished) {
-    return answers;
-    } else {
-    return getAnswers();
-    }
-});
 }
 
-for every full employee profile data use bootstrap to create a card of their data */
-
-/* function writeToFile(readmeFile) {
-    fs.writeFile("./index.html", readmeFile, (err) => {
-        if (err) {
-            console.log(err);
-            return;
+function mainMenu () {
+    inquirer.prompt([
+        {
+            type: 'list',
+            message: 'Would you like to add more?',
+            name: `choice`,
+            choices: ["Engineer", "Intern", "I am done"]
         }
-        console.log('Team profile created!')
-    });
-};
+    ]).then(response => {
+        if(response.choice == "Engineer") {
+            engineerQuestions()
+        }else if (response.choice == "Intern") {
+            internQuestions()
+        }else {
+            createHTML()
+        }
+    })
+}
 
-questionsForProfileGen().then(answers => {
-    console.log(answers)
-    const newProfileTemplate = generateHtml(answers)
-    console.log(newProfileTemplate)
-    writeToFile(newProfileTemplate)
+function engineerQuestions () {
+    inquirer.prompt([
+        {
+            type: 'input',
+            message: 'What is the Engineer name?',
+            name: `engName`
+        },
+        {
+            type: 'input',
+            message: 'What is the Engineer ID?',
+            name: `engId`
+        },
+        {
+            type: 'input',
+            message: 'What is the Engineer Email?',
+            name: `engEmail`
+        },
+        {
+            type: 'input',
+            message: 'What is the Engineer office number?',
+            name: `engOffice`
+        },
+        {
+            type: 'input',
+            message: 'What is the Engineer Github?',
+            name: `engGithub`
+        }
+    ]).then(response => {
+        const newEngineer = new Engineer(response.engName, response.engId, response.engEmail, response.engOffice, response.engGithub);
+        console.log(newEngineer.getRole())
+        employees.push(newEngineer)
+        mainMenu()
+    })
+}
+
+function internQuestions () {
+    inquirer.prompt([
+        {
+            type: 'input',
+            message: 'What is the Interns name?',
+            name: `intName`
+        },
+        {
+            type: 'input',
+            message: 'What is the Interns ID?',
+            name: `intId`
+        },
+        {
+            type: 'input',
+            message: 'What is the Interns Email?',
+            name: `intEmail`
+        },
+        {
+            type: 'input',
+            message: 'Where did the intern go to school?',
+            name: `intSchool`
+        }
+    ]).then(response => {
+        const newIntern = new Intern(response.intName, response.intId, response.intEmail, response.intSchool);
+        console.log(newIntern.getRole())
+        employees.push(newIntern)
+        mainMenu()
+    })
+}
+
+function writeToFile(templateStr) {
+    fs.writeFile('./teamProfile.html', templateStr, (err) => {
+    if (err) {
+        console.log(err);
+        return;
+    } console.log('html created!')
+})};
+
+/* startWithMgr().then(employees => {
+    const newTeamProfile = htmlTemplate(employees);
+    writeToFile(newTeamProfile);
 }); */
 
-determineEmployeeCount();
+function createHTML () {
+const templateStr = htmlTemplate(employees);
+console.log(employees)
+console.log(templateStr)
+writeToFile(templateStr)
+}
+
+/* make writefile for templatestr */
+
+startWithMgr()
