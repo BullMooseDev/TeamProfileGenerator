@@ -128,11 +128,6 @@ function writeToFile(templateStr) {
     } console.log('html created!')
 })};
 
-/* startWithMgr().then(employees => {
-    const newTeamProfile = htmlTemplate(employees);
-    writeToFile(newTeamProfile);
-}); */
-
 function createHTML () {
 const templateStr = htmlTemplate(employees);
 console.log(employees)
@@ -140,6 +135,7 @@ console.log(templateStr)
 writeToFile(templateStr)
 }
 
-/* make writefile for templatestr */
+module.exports = employees;
+
 
 startWithMgr()
