@@ -74,11 +74,6 @@ function engineerQuestions () {
         },
         {
             type: 'input',
-            message: 'What is the Engineer office number?',
-            name: `engOffice`
-        },
-        {
-            type: 'input',
             message: 'What is the Engineer Github?',
             name: `engGithub`
         }
